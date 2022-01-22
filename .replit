@@ -1,0 +1,14 @@
+run="yarn run dev"
+
+entrypoint = "src/index.ts"
+
+[packager]
+language = "nodejs-yarn"
+[packager.features]
+packageSearch = true
+guessImports = true
+
+[languages.js]
+pattern = "**/*.ts"
+[languages.js.languageServer]
+start = ["typescript-language-server", "--stdio"]
