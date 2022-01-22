@@ -38,7 +38,7 @@
     "vite": "^2.3.8"
   },
   "repository": {
-    "type": "repl",
-    "url": "https://replit.com/@util/codemirror-indentation-markers"
+    "type": "git",
+    "url": "https://github.com/replit/codemirror-indentation-markers.git"
   }
 }
