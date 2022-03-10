@@ -154,6 +154,11 @@ function findNextNonEmptyLineAndIndentLevel(
 function addIndentationMarkers(view: EditorView) {
   const builder = new RangeSetBuilder<Decoration>();
   const indentSize = getIndentUnit(view.state);
+  const markers: Array<{
+    from: number;
+    to: number;
+    decoration: Decoration;
+  }> = [];
 
   for (const { from, to } of view.visibleRanges) {
     let pos = from;
@@ -188,11 +193,15 @@ function addIndentationMarkers(view: EditorView) {
           nextIndentMarkers,
         );
         const indentationWidget = Decoration.widget({
-          widget: new IndentationWidget(numIndentMarkers, ),
+          widget: new IndentationWidget(numIndentMarkers),
         });
 
         // Add the indent widget and move on to next line
-        builder.add(line.from, line.from, indentationWidget);
+        markers.push({
+          from: line.from,
+          to: line.from,
+          decoration: indentationWidget,
+        });
         pos = line.to + 1;
 
         continue;
@@ -203,7 +212,11 @@ function addIndentationMarkers(view: EditorView) {
         indentSize,
         (char) => {
           const charPos = line.from + char;
-          builder.add(charPos, charPos + 1, indentationMark);
+          markers.push({
+            from: charPos,
+            to: charPos + 1,
+            decoration: indentationMark,
+          });
         },
       );
 
@@ -211,6 +224,11 @@ function addIndentationMarkers(view: EditorView) {
       pos = line.to + 1;
     }
   }
+
+  markers.sort((a, b) => a.from - b.from);
+  markers.forEach(({ from, to, decoration }) => {
+    builder.add(from, to, decoration);
+  });
 
   return builder.finish();
 }
