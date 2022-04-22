@@ -4,9 +4,8 @@ import {
   EditorView,
   WidgetType,
 } from '@codemirror/view';
-import { indentUnit, getIndentUnit } from '@codemirror/language';
-import { RangeSetBuilder } from '@codemirror/rangeset';
-import { EditorState, Extension, Text } from '@codemirror/state';
+import { getIndentUnit } from '@codemirror/language';
+import { RangeSetBuilder, Extension, Text } from '@codemirror/state';
 
 const indentationMark = Decoration.mark({
   class: 'cm-indentation-marker',
