@@ -11,7 +11,8 @@ heuristic similar to what other popular editors, like Ace and Monaco, use.
 ### Usage
 
 ```ts
-import { basicSetup, EditorState } from '@codemirror/basic-setup';
+import { basicSetup } from 'codemirror';
+import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 
