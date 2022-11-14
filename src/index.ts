@@ -4,6 +4,7 @@ import {
   EditorView,
   WidgetType,
   PluginValue,
+  ViewUpdate,
 } from '@codemirror/view';
 import { getIndentUnit } from '@codemirror/language';
 import { Extension, Text, RangeSet, EditorState } from '@codemirror/state';
@@ -324,7 +325,13 @@ function getLinesWithActiveIndentMarker(
   return { start, end, activeIndent: currentIndent };
 }
 
-function indentationMarkerViewPlugin() {
+type IndentationMarkerConfiguration = {
+  shouldUpdate?: (update: ViewUpdate) => boolean;
+};
+
+function indentationMarkerViewPlugin(
+  {shouldUpdate}: IndentationMarkerConfiguration
+) {
   return ViewPlugin.define<PluginValue & { decorations: RangeSet<Decoration> }>(
     (view) => ({
       decorations: addIndentationMarkers(view),
@@ -332,7 +339,8 @@ function indentationMarkerViewPlugin() {
         if (
           update.docChanged ||
           update.viewportChanged ||
-          update.selectionSet
+          update.selectionSet ||
+          (shouldUpdate && shouldUpdate(update))
         ) {
           this.decorations = addIndentationMarkers(update.view);
         }
@@ -369,6 +377,8 @@ const indentationMarkerBaseTheme = EditorView.baseTheme({
   },
 });
 
-export function indentationMarkers(): Extension {
-  return [indentationMarkerViewPlugin(), indentationMarkerBaseTheme];
+export function indentationMarkers(
+  config?: IndentationMarkerConfiguration
+): Extension {
+  return [indentationMarkerViewPlugin({...config}), indentationMarkerBaseTheme];
 }
