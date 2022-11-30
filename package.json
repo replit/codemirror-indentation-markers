@@ -19,7 +19,8 @@
   "scripts": {
     "dev": "vite ./dev",
     "build": "cm-buildhelper src/index.ts",
-    "test": "cm-runtests"
+    "test": "cm-runtests",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "@codemirror/language": "^6.0.0",
