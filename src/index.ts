@@ -18,11 +18,11 @@ import { IndentEntry, IndentationMap } from './map';
 // - --indent-marker-bg-part
 // - --indent-marker-active-bg-part
 
-/** Color of inactive indent markers. */
+/** Color of inactive indent markers. Based on RUI's var(--background-higher) */
 const MARKER_COLOR_LIGHT = '#F0F1F2';
 const MARKER_COLOR_DARK = '#2B3245';
 
-/** Color of active indent markers. */
+/** Color of active indent markers. Based on RUI's var(--background-highest) */
 const MARKER_COLOR_ACTIVE_LIGHT = '#E4E5E6';
 const MARKER_COLOR_ACTIVE_DARK = '#3C445C';
 
@@ -44,6 +44,10 @@ const indentTheme = EditorView.baseTheme({
 
     '--indent-marker-active-bg-part':
       `linear-gradient(90deg, ${MARKER_COLOR_ACTIVE_DARK} ${MARKER_THICKNESS}, transparent 0) top left`,
+  },
+
+  '.cm-line': {
+    position: 'relative',
   },
 
   // this pseudo-element is used to draw the indent markers,
@@ -78,6 +82,8 @@ function makeBackgroundCSS(entry: IndentEntry, width: number) {
 
     css += `var(${part}) ${i * width}.5ch`;
   }
+
+  console.log('BG CSS: ', css);
 
   return css;
 }
