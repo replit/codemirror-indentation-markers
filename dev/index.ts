@@ -2,7 +2,7 @@ import { basicSetup } from 'codemirror';
 import { EditorView, keymap } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { indentWithTab } from '@codemirror/commands';
-import { indentationMarkers } from '../src';
+import indentationMarkers from '../src';
 
 const doc = `
 def read_file(path):
