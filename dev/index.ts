@@ -1,7 +1,7 @@
 import { basicSetup } from 'codemirror';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorView } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
-import { indentWithTab } from '@codemirror/commands';
+import { python } from '@codemirror/lang-python';
 import indentationMarkers from '../src';
 
 const doc = `
@@ -28,8 +28,8 @@ new EditorView({
 
     extensions: [
       basicSetup,
-      keymap.of([indentWithTab]),
-      indentationMarkers()
+      python(),
+      indentationMarkers(),
     ],
   }),
   parent: document.querySelector('#editor'),
