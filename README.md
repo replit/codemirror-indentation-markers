@@ -33,15 +33,3 @@ new EditorView({
 });
 
 ```
-
-### Styling
-To override the default styling of the indentation markers, simply create a theme plugin that targets the `.cm-indentation-marker` class:
-
-```ts
-const myCustomIndentationMarkerTheme = EditorView.baseTheme({
-  '.cm-indentation-marker': {
-    // Note: You may have to add `!important` to overwrite the extension's base theme.
-    background: '... !important',
-  },
-});
-```
