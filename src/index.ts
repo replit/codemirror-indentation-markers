@@ -137,7 +137,7 @@ class IndentMarkersClass implements PluginValue {
   }
 }
 
-export default function indentationMarkers() {
+export function indentationMarkers() {
   return [
     indentTheme,
     ViewPlugin.fromClass(IndentMarkersClass, {
