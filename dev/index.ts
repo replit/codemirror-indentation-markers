@@ -7,20 +7,20 @@ import { indentationMarkers } from '../src';
 
 const doc = `
 def read_file(path):
-    with open(path, 'r') as file:
-
-        print("opening file")
-        text = file.read()
+  with open(path, 'r') as file:
+  
+    print("opening file")
+    text = file.read()
     
-        file.close()
+    file.close()
     
-        if len(text) > 1000:
-            print("thats a big file!")
-    
-        return text
+    if len(text) > 1000:
+      print("thats a big file!")
+      
+    return text
 
 def main():
-    read_file("notes.txt")
+  read_file("notes.txt")
 `
 
 const indentConf = new Compartment()
