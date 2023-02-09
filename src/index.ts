@@ -83,8 +83,6 @@ function makeBackgroundCSS(entry: IndentEntry, width: number) {
     css += `var(${part}) ${i * width}.5ch`;
   }
 
-  console.log('BG CSS: ', css);
-
   return css;
 }
 
