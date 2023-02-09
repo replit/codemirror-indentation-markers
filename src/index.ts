@@ -99,7 +99,12 @@ class IndentMarkersClass implements PluginValue {
   }
 
   update(update: ViewUpdate) {
-    if (update.docChanged || update.viewportChanged || update.selectionSet) {
+    const unitWidth = getIndentUnit(update.state);
+    const unitWidthChanged = unitWidth !== this.unitWidth
+    if (unitWidthChanged) {
+      this.unitWidth = unitWidth
+    }
+    if (update.docChanged || update.viewportChanged || update.selectionSet || unitWidthChanged) {
       this.generate(update.state);
     }
   }
