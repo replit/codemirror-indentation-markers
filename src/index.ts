@@ -65,35 +65,33 @@ const indentTheme = EditorView.baseTheme({
   },
 });
 
-function makeBackgroundCSS(entry: IndentEntry, width: number) {
+function makeBackgroundCSS(entry: IndentEntry, width: number, columnZeroMarkers: boolean) {
   const { level, active } = entry;
 
-  let css = '';
+  const css: string[] = [];
 
-  for (let i = 0; i < level; i++) {
+  for (let i = columnZeroMarkers ? 0 : 1; i < level; i++) {
     const part =
       active && active - 1 === i
         ? '--indent-marker-active-bg-part'
         : '--indent-marker-bg-part';
 
-    if (i !== 0 && i !== level) {
-      css += ',';
-    }
-
-    css += `var(${part}) ${i * width}.5ch`;
+    css.push(`var(${part}) ${i * width}.5ch`);
   }
 
-  return css;
+  return css.join(',');
 }
 
 type IndentationMarkerConfiguration = {
-  activeBlockMarkers?: boolean;
+  activeBlockMarkers?: boolean
+  columnZeroMarkers?: boolean
 };
 
 export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
   combine(configs) {
     return combineConfig(configs, {
       activeBlockMarkers: true,
+      columnZeroMarkers: true,
     });
   }
 });
@@ -137,6 +135,7 @@ class IndentMarkersClass implements PluginValue {
 
     const lines = getVisibleLines(this.view, state);
     const map = new IndentationMap(lines, state, this.unitWidth);
+    const { columnZeroMarkers } = state.facet(indentationMarkerConfig)
 
     for (const line of lines) {
       const entry = map.get(line.number);
@@ -145,7 +144,7 @@ class IndentMarkersClass implements PluginValue {
         continue;
       }
 
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth);
+      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, columnZeroMarkers);
 
       builder.add(
         line.from,
