@@ -1,5 +1,5 @@
 import { EditorState, Line } from '@codemirror/state';
-import { numColumns } from './utils';
+import { getCurrentLine, numColumns } from './utils';
 
 export interface IndentEntry {
   line: Line;
@@ -191,8 +191,7 @@ export class IndentationMap {
    * the active indent level for the lines in the block.
    */
   private findAndSetActiveLines() {
-    const currentPos = this.state.selection.main.head;
-    const currentLine = this.state.doc.lineAt(currentPos);
+    const currentLine = getCurrentLine(this.state)
 
     if (!this.has(currentLine)) {
       return;

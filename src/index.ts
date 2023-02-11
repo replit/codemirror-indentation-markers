@@ -8,7 +8,7 @@ import {
   ViewUpdate,
   PluginValue,
 } from '@codemirror/view';
-import { getVisibleLines } from './utils';
+import { getCurrentLine, getVisibleLines } from './utils';
 import { IndentEntry, IndentationMap } from './map';
 
 // CSS classes:
@@ -91,20 +91,30 @@ class IndentMarkersClass implements PluginValue {
   decorations!: DecorationSet;
 
   private unitWidth: number;
+  private currentLineNumber: number;
 
   constructor(view: EditorView) {
     this.view = view;
     this.unitWidth = getIndentUnit(view.state);
+    this.currentLineNumber = getCurrentLine(view.state).number;
     this.generate(view.state);
   }
 
   update(update: ViewUpdate) {
     const unitWidth = getIndentUnit(update.state);
-    const unitWidthChanged = unitWidth !== this.unitWidth
+    const unitWidthChanged = unitWidth !== this.unitWidth;
     if (unitWidthChanged) {
-      this.unitWidth = unitWidth
+      this.unitWidth = unitWidth;
     }
-    if (update.docChanged || update.viewportChanged || update.selectionSet || unitWidthChanged) {
+    const lineNumber = getCurrentLine(update.state).number;
+    const lineNumberChanged = lineNumber !== this.currentLineNumber;
+    this.currentLineNumber = lineNumber;
+    if (
+        update.docChanged ||
+        update.viewportChanged ||
+        unitWidthChanged ||
+        (update.selectionSet && lineNumberChanged)
+    ) {
       this.generate(update.state);
     }
   }
