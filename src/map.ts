@@ -1,5 +1,6 @@
 import { EditorState, Line } from '@codemirror/state';
 import { getCurrentLine, numColumns } from './utils';
+import {indentationMarkerConfig} from "./index";
 
 export interface IndentEntry {
   line: Line;
@@ -46,7 +47,9 @@ export class IndentationMap {
       this.add(line);
     }
 
-    this.findAndSetActiveLines();
+    if (this.state.facet(indentationMarkerConfig).activeBlockMarkers) {
+      this.findAndSetActiveLines();
+    }
   }
 
   /**

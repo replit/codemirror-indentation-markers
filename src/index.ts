@@ -1,5 +1,5 @@
 import { getIndentUnit } from '@codemirror/language';
-import { EditorState, RangeSetBuilder } from '@codemirror/state';
+import { combineConfig, EditorState, Facet, RangeSetBuilder } from '@codemirror/state';
 import {
   Decoration,
   ViewPlugin,
@@ -86,6 +86,18 @@ function makeBackgroundCSS(entry: IndentEntry, width: number) {
   return css;
 }
 
+type IndentationMarkerConfiguration = {
+  activeBlockMarkers?: boolean;
+};
+
+export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
+  combine(configs) {
+    return combineConfig(configs, {
+      activeBlockMarkers: true,
+    });
+  }
+});
+
 class IndentMarkersClass implements PluginValue {
   view: EditorView;
   decorations!: DecorationSet;
@@ -109,11 +121,12 @@ class IndentMarkersClass implements PluginValue {
     const lineNumber = getCurrentLine(update.state).number;
     const lineNumberChanged = lineNumber !== this.currentLineNumber;
     this.currentLineNumber = lineNumber;
+    const activeBlockUpdateRequired = update.state.facet(indentationMarkerConfig).activeBlockMarkers && lineNumberChanged;
     if (
         update.docChanged ||
         update.viewportChanged ||
         unitWidthChanged ||
-        (update.selectionSet && lineNumberChanged)
+        activeBlockUpdateRequired
     ) {
       this.generate(update.state);
     }
@@ -150,8 +163,9 @@ class IndentMarkersClass implements PluginValue {
   }
 }
 
-export function indentationMarkers() {
+export function indentationMarkers(config: IndentationMarkerConfiguration = {}) {
   return [
+    indentationMarkerConfig.of(config),
     indentTheme,
     ViewPlugin.fromClass(IndentMarkersClass, {
       decorations: (v) => v.decorations,
