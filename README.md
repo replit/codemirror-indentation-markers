@@ -33,3 +33,40 @@ new EditorView({
 });
 
 ```
+
+### Options
+
+You can provide an options object to `indentationMarkers()` with the following
+optional properties:
+
+- `activeBlockMarkers`
+    
+    Boolean that controls whether the active block markers are styled
+    differently. Setting this to `false` provides a significant performance
+    enhancement because it means that markers do not need to be regenerated
+    when the selection changes. Defaults to `true`.
+ 
+- `columnZeroMarkers`
+
+    Boolean that controls whether there are markers at column zero. Defaults to
+   `true`.
+
+#### Example
+
+```ts
+new EditorView({
+  state: EditorState.create({
+    doc,
+    extensions: [
+      basicSetup,
+      indentationMarkers({
+        activeBlockMarkers: false,
+        columnZeroMarkers: false,
+      })
+    ],
+  }),
+  parent: document.querySelector('#editor'),
+});
+```
+
+![Example](public/cm-indentation-markers-options.png)
