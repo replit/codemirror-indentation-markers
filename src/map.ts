@@ -194,7 +194,7 @@ export class IndentationMap {
    * the active indent level for the lines in the block.
    */
   private findAndSetActiveLines() {
-    const currentLine = getCurrentLine(this.state)
+    const currentLine = getCurrentLine(this.state);
 
     if (!this.has(currentLine)) {
       return;
