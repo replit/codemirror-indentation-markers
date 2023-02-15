@@ -68,5 +68,3 @@ new EditorView({
   parent: document.querySelector('#editor'),
 });
 ```
-
-![Example](public/cm-indentation-markers-options.png)
