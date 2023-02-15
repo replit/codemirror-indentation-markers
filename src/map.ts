@@ -47,7 +47,7 @@ export class IndentationMap {
       this.add(line);
     }
 
-    if (this.state.facet(indentationMarkerConfig).activeBlockMarkers) {
+    if (this.state.facet(indentationMarkerConfig).highlightActiveBlock) {
       this.findAndSetActiveLines();
     }
   }

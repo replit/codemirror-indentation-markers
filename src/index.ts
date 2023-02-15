@@ -65,12 +65,12 @@ const indentTheme = EditorView.baseTheme({
   },
 });
 
-function makeBackgroundCSS(entry: IndentEntry, width: number, columnZeroMarkers: boolean) {
+function makeBackgroundCSS(entry: IndentEntry, width: number, showFirstIndent: boolean) {
   const { level, active } = entry;
 
   const css: string[] = [];
 
-  for (let i = columnZeroMarkers ? 0 : 1; i < level; i++) {
+  for (let i = showFirstIndent ? 0 : 1; i < level; i++) {
     const part =
       active && active - 1 === i
         ? '--indent-marker-active-bg-part'
@@ -83,15 +83,15 @@ function makeBackgroundCSS(entry: IndentEntry, width: number, columnZeroMarkers:
 }
 
 type IndentationMarkerConfiguration = {
-  activeBlockMarkers?: boolean
-  columnZeroMarkers?: boolean
+  highlightActiveBlock?: boolean
+  showFirstIndent?: boolean
 };
 
 export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
   combine(configs) {
     return combineConfig(configs, {
-      activeBlockMarkers: true,
-      columnZeroMarkers: true,
+      highlightActiveBlock: true,
+      showFirstIndent: true,
     });
   }
 });
@@ -119,7 +119,7 @@ class IndentMarkersClass implements PluginValue {
     const lineNumber = getCurrentLine(update.state).number;
     const lineNumberChanged = lineNumber !== this.currentLineNumber;
     this.currentLineNumber = lineNumber;
-    const activeBlockUpdateRequired = update.state.facet(indentationMarkerConfig).activeBlockMarkers && lineNumberChanged;
+    const activeBlockUpdateRequired = update.state.facet(indentationMarkerConfig).highlightActiveBlock && lineNumberChanged;
     if (
         update.docChanged ||
         update.viewportChanged ||
@@ -135,7 +135,7 @@ class IndentMarkersClass implements PluginValue {
 
     const lines = getVisibleLines(this.view, state);
     const map = new IndentationMap(lines, state, this.unitWidth);
-    const { columnZeroMarkers } = state.facet(indentationMarkerConfig)
+    const { showFirstIndent } = state.facet(indentationMarkerConfig)
 
     for (const line of lines) {
       const entry = map.get(line.number);
@@ -144,7 +144,7 @@ class IndentMarkersClass implements PluginValue {
         continue;
       }
 
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, columnZeroMarkers);
+      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, showFirstIndent);
 
       builder.add(
         line.from,
