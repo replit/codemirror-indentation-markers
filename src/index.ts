@@ -65,12 +65,12 @@ const indentTheme = EditorView.baseTheme({
   },
 });
 
-function makeBackgroundCSS(entry: IndentEntry, width: number, showFirstIndent: boolean) {
+function makeBackgroundCSS(entry: IndentEntry, width: number, hideFirstIndent: boolean) {
   const { level, active } = entry;
 
   const css: string[] = [];
 
-  for (let i = showFirstIndent ? 0 : 1; i < level; i++) {
+  for (let i = hideFirstIndent ? 1 : 0; i < level; i++) {
     const part =
       active && active - 1 === i
         ? '--indent-marker-active-bg-part'
@@ -82,16 +82,23 @@ function makeBackgroundCSS(entry: IndentEntry, width: number, showFirstIndent: b
   return css.join(',');
 }
 
-type IndentationMarkerConfiguration = {
+interface IndentationMarkerConfiguration {
+  /**
+   * Determines whether active block marker is styled differently.
+   */
   highlightActiveBlock?: boolean
-  showFirstIndent?: boolean
-};
+
+  /**
+   * Determines whether markers at column zero are omitted.
+   */
+  hideFirstIndent?: boolean
+}
 
 export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
   combine(configs) {
     return combineConfig(configs, {
       highlightActiveBlock: true,
-      showFirstIndent: true,
+      hideFirstIndent: false,
     });
   }
 });
@@ -135,7 +142,7 @@ class IndentMarkersClass implements PluginValue {
 
     const lines = getVisibleLines(this.view, state);
     const map = new IndentationMap(lines, state, this.unitWidth);
-    const { showFirstIndent } = state.facet(indentationMarkerConfig)
+    const { hideFirstIndent } = state.facet(indentationMarkerConfig)
 
     for (const line of lines) {
       const entry = map.get(line.number);
@@ -144,7 +151,7 @@ class IndentMarkersClass implements PluginValue {
         continue;
       }
 
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, showFirstIndent);
+      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, hideFirstIndent);
 
       builder.add(
         line.from,

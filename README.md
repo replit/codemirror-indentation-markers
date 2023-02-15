@@ -41,15 +41,15 @@ optional properties:
 
 - `highlightActiveBlock`
     
-    Boolean that controls whether the active block markers are styled
+    Boolean that determines whether the active block marker is styled
     differently. Setting this to `false` provides a significant performance
     enhancement because it means that markers do not need to be regenerated
     when the selection changes. Defaults to `true`.
  
-- `showFirstIndent`
+  - `hideFirstIndent`
 
-    Boolean that controls whether there are markers at column zero. Defaults to
-   `true`.
+    Boolean that determines whether markers at column zero are omitted.
+    Defaults to `false`.
 
 #### Example
 
@@ -61,7 +61,7 @@ new EditorView({
       basicSetup,
       indentationMarkers({
         highlightActiveBlock: false,
-        showFirstIndent: false,
+        hideFirstIndent: true,
       })
     ],
   }),
