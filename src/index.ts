@@ -89,7 +89,7 @@ interface IndentationMarkerConfiguration {
   highlightActiveBlock?: boolean
 
   /**
-   * Determines whether markers at column zero are omitted.
+   * Determines whether markers in the first column are omitted.
    */
   hideFirstIndent?: boolean
 }

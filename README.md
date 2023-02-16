@@ -48,7 +48,7 @@ optional properties:
  
   - `hideFirstIndent`
 
-    Boolean that determines whether markers at column zero are omitted.
+    Boolean that determines whether markers in the first column are omitted.
     Defaults to `false`.
 
 #### Example
