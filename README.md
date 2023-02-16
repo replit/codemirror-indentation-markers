@@ -46,7 +46,7 @@ optional properties:
     enhancement because it means that markers do not need to be regenerated
     when the selection changes. Defaults to `true`.
  
-  - `hideFirstIndent`
+- `hideFirstIndent`
 
     Boolean that determines whether markers in the first column are omitted.
     Defaults to `false`.
