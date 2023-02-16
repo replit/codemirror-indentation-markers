@@ -1,5 +1,5 @@
 import { getIndentUnit } from '@codemirror/language';
-import { EditorState, RangeSetBuilder } from '@codemirror/state';
+import { combineConfig, EditorState, Facet, RangeSetBuilder } from '@codemirror/state';
 import {
   Decoration,
   ViewPlugin,
@@ -8,7 +8,7 @@ import {
   ViewUpdate,
   PluginValue,
 } from '@codemirror/view';
-import { getVisibleLines } from './utils';
+import { getCurrentLine, getVisibleLines } from './utils';
 import { IndentEntry, IndentationMap } from './map';
 
 // CSS classes:
@@ -65,46 +65,74 @@ const indentTheme = EditorView.baseTheme({
   },
 });
 
-function makeBackgroundCSS(entry: IndentEntry, width: number) {
+function makeBackgroundCSS(entry: IndentEntry, width: number, hideFirstIndent: boolean) {
   const { level, active } = entry;
 
-  let css = '';
+  const css: string[] = [];
 
-  for (let i = 0; i < level; i++) {
+  for (let i = hideFirstIndent ? 1 : 0; i < level; i++) {
     const part =
       active && active - 1 === i
         ? '--indent-marker-active-bg-part'
         : '--indent-marker-bg-part';
 
-    if (i !== 0 && i !== level) {
-      css += ',';
-    }
-
-    css += `var(${part}) ${i * width}.5ch`;
+    css.push(`var(${part}) ${i * width}.5ch`);
   }
 
-  return css;
+  return css.join(',');
 }
+
+interface IndentationMarkerConfiguration {
+  /**
+   * Determines whether active block marker is styled differently.
+   */
+  highlightActiveBlock?: boolean
+
+  /**
+   * Determines whether markers at column zero are omitted.
+   */
+  hideFirstIndent?: boolean
+}
+
+export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
+  combine(configs) {
+    return combineConfig(configs, {
+      highlightActiveBlock: true,
+      hideFirstIndent: false,
+    });
+  }
+});
 
 class IndentMarkersClass implements PluginValue {
   view: EditorView;
   decorations!: DecorationSet;
 
   private unitWidth: number;
+  private currentLineNumber: number;
 
   constructor(view: EditorView) {
     this.view = view;
     this.unitWidth = getIndentUnit(view.state);
+    this.currentLineNumber = getCurrentLine(view.state).number;
     this.generate(view.state);
   }
 
   update(update: ViewUpdate) {
     const unitWidth = getIndentUnit(update.state);
-    const unitWidthChanged = unitWidth !== this.unitWidth
+    const unitWidthChanged = unitWidth !== this.unitWidth;
     if (unitWidthChanged) {
-      this.unitWidth = unitWidth
+      this.unitWidth = unitWidth;
     }
-    if (update.docChanged || update.viewportChanged || update.selectionSet || unitWidthChanged) {
+    const lineNumber = getCurrentLine(update.state).number;
+    const lineNumberChanged = lineNumber !== this.currentLineNumber;
+    this.currentLineNumber = lineNumber;
+    const activeBlockUpdateRequired = update.state.facet(indentationMarkerConfig).highlightActiveBlock && lineNumberChanged;
+    if (
+        update.docChanged ||
+        update.viewportChanged ||
+        unitWidthChanged ||
+        activeBlockUpdateRequired
+    ) {
       this.generate(update.state);
     }
   }
@@ -114,6 +142,7 @@ class IndentMarkersClass implements PluginValue {
 
     const lines = getVisibleLines(this.view, state);
     const map = new IndentationMap(lines, state, this.unitWidth);
+    const { hideFirstIndent } = state.facet(indentationMarkerConfig)
 
     for (const line of lines) {
       const entry = map.get(line.number);
@@ -122,7 +151,7 @@ class IndentMarkersClass implements PluginValue {
         continue;
       }
 
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth);
+      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, hideFirstIndent);
 
       builder.add(
         line.from,
@@ -140,8 +169,9 @@ class IndentMarkersClass implements PluginValue {
   }
 }
 
-export function indentationMarkers() {
+export function indentationMarkers(config: IndentationMarkerConfiguration = {}) {
   return [
+    indentationMarkerConfig.of(config),
     indentTheme,
     ViewPlugin.fromClass(IndentMarkersClass, {
       decorations: (v) => v.decorations,

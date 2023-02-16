@@ -33,3 +33,38 @@ new EditorView({
 });
 
 ```
+
+### Options
+
+You can provide an options object to `indentationMarkers()` with the following
+optional properties:
+
+- `highlightActiveBlock`
+    
+    Boolean that determines whether the active block marker is styled
+    differently. Setting this to `false` provides a significant performance
+    enhancement because it means that markers do not need to be regenerated
+    when the selection changes. Defaults to `true`.
+ 
+  - `hideFirstIndent`
+
+    Boolean that determines whether markers at column zero are omitted.
+    Defaults to `false`.
+
+#### Example
+
+```ts
+new EditorView({
+  state: EditorState.create({
+    doc,
+    extensions: [
+      basicSetup,
+      indentationMarkers({
+        highlightActiveBlock: false,
+        hideFirstIndent: true,
+      })
+    ],
+  }),
+  parent: document.querySelector('#editor'),
+});
+```

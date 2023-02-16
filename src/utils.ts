@@ -1,4 +1,4 @@
-import { Line } from '@codemirror/state';
+import { EditorState, Line } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 
 /**
@@ -25,6 +25,16 @@ export function getVisibleLines(view: EditorView, state = view.state) {
   }
 
   return lines;
+}
+
+/**
+ * Gets the line at the position of the primary cursor.
+ *
+ * @param state - The editor state from which to extract the line.
+ */
+export function getCurrentLine(state: EditorState) {
+  const currentPos = state.selection.main.head;
+  return state.doc.lineAt(currentPos);
 }
 
 /**
