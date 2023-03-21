@@ -31,19 +31,13 @@ const MARKER_THICKNESS = '1px';
 
 const indentTheme = EditorView.baseTheme({
   '&light': {
-    '--indent-marker-bg-part':
-      `linear-gradient(90deg, ${MARKER_COLOR_LIGHT} ${MARKER_THICKNESS}, transparent 0) top left`,
-
-    '--indent-marker-active-bg-part':
-      `linear-gradient(90deg, ${MARKER_COLOR_ACTIVE_LIGHT} ${MARKER_THICKNESS}, transparent 0) top left`,
+    '--indent-marker-bg-color': MARKER_COLOR_LIGHT,
+    '--indent-marker-active-bg-color': MARKER_COLOR_ACTIVE_LIGHT
   },
   
   '&dark': {
-    '--indent-marker-bg-part':
-      `linear-gradient(90deg, ${MARKER_COLOR_DARK} ${MARKER_THICKNESS}, transparent 0) top left`,
-
-    '--indent-marker-active-bg-part':
-      `linear-gradient(90deg, ${MARKER_COLOR_ACTIVE_DARK} ${MARKER_THICKNESS}, transparent 0) top left`,
+    '--indent-marker-bg-color': MARKER_COLOR_DARK,
+    '--indent-marker-active-bg-color': MARKER_COLOR_ACTIVE_DARK
   },
 
   '.cm-line': {
@@ -65,21 +59,42 @@ const indentTheme = EditorView.baseTheme({
   },
 });
 
-function makeBackgroundCSS(entry: IndentEntry, width: number, hideFirstIndent: boolean) {
+function createGradient(markerCssProperty: string, indentWidth: number, startOffset: number, columns: number) {
+  const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${MARKER_THICKNESS}, transparent ${MARKER_THICKNESS} ${indentWidth}ch)`
+  // Subtract one pixel from the background width to get rid of artifacts of pixel rounding
+  return `${gradient} ${startOffset * indentWidth}.5ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
+}
+
+function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean) {
   const { level, active } = entry;
+  if (hideFirstIndent && level === 0) {
+    return [];
+  }
+  const startAt = hideFirstIndent ? 1 : 0;
+  const backgrounds = [];
 
-  const css: string[] = [];
-
-  for (let i = hideFirstIndent ? 1 : 0; i < level; i++) {
-    const part =
-      active && active - 1 === i
-        ? '--indent-marker-active-bg-part'
-        : '--indent-marker-bg-part';
-
-    css.push(`var(${part}) ${i * width}.5ch`);
+  if (active !== undefined) {
+    const markersBeforeActive = active - startAt - 1;
+    if (markersBeforeActive > 0) {
+      backgrounds.push(
+        createGradient('--indent-marker-bg-color', indentWidth, startAt, markersBeforeActive),
+      );
+    }
+    backgrounds.push(
+      createGradient('--indent-marker-active-bg-color', indentWidth, active - 1, 1),
+    );
+    if (active !== level) {
+      backgrounds.push(
+        createGradient('--indent-marker-bg-color', indentWidth, active, level - active)
+      );
+    }
+  } else {
+    backgrounds.push(
+      createGradient('--indent-marker-bg-color', indentWidth, startAt, level - startAt)
+    );
   }
 
-  return css.join(',');
+  return backgrounds.join(',');
 }
 
 interface IndentationMarkerConfiguration {
