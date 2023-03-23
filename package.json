@@ -1,7 +1,7 @@
 {
   "name": "@replit/codemirror-indentation-markers",
   "description": "Render indentation markers in CodeMirror",
-  "version": "6.3.0",
+  "version": "6.4.0",
   "author": {
     "name": "Sergei Chestakov",
     "email": "me@sergei.com"
