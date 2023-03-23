@@ -26,8 +26,8 @@ const MARKER_COLOR_DARK = '#2B3245';
 const MARKER_COLOR_ACTIVE_LIGHT = '#E4E5E6';
 const MARKER_COLOR_ACTIVE_DARK = '#3C445C';
 
-/** Thickness of indent markers. Probably should be integer pixel values. */
-const MARKER_THICKNESS = '1px';
+/** Thickness of indent markers */
+const MARKER_THICKNESS = 1;
 
 const indentTheme = EditorView.baseTheme({
   '&light': {
@@ -60,8 +60,9 @@ const indentTheme = EditorView.baseTheme({
 });
 
 function createGradient(markerCssProperty: string, indentWidth: number, startOffset: number, columns: number) {
-  const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${MARKER_THICKNESS}, transparent ${MARKER_THICKNESS} ${indentWidth}ch)`
-  // Subtract one pixel from the background width to get rid of artifacts of pixel rounding
+  // the .2px offset to the MARKER_THICKNESS is to make sure that the marker is not removed by subpixel rounding
+  const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${MARKER_THICKNESS}px, transparent ${MARKER_THICKNESS + .2}px ${indentWidth}ch)`
+  // Subtract one pixel from the background width to get rid of artifacts of pixel rounding at the end of the gradient
   return `${gradient} ${startOffset * indentWidth}.5ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
 }
 
