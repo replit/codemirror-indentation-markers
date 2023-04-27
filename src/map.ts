@@ -1,6 +1,6 @@
 import { EditorState, Line } from '@codemirror/state';
 import { getCurrentLine, numColumns } from './utils';
-import {indentationMarkerConfig} from "./index";
+import {indentationMarkerConfig} from "./config";
 
 export interface IndentEntry {
   line: Line;

@@ -10,6 +10,7 @@ import {
 } from '@codemirror/view';
 import { getCurrentLine, getVisibleLines } from './utils';
 import { IndentEntry, IndentationMap } from './map';
+import { IndentationMarkerConfiguration, indentationMarkerConfig } from "./config";
 
 // CSS classes:
 // - .cm-indent-markers
@@ -97,27 +98,6 @@ function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstInd
   return backgrounds.join(',');
 }
 
-interface IndentationMarkerConfiguration {
-  /**
-   * Determines whether active block marker is styled differently.
-   */
-  highlightActiveBlock?: boolean
-
-  /**
-   * Determines whether markers in the first column are omitted.
-   */
-  hideFirstIndent?: boolean
-}
-
-export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
-  combine(configs) {
-    return combineConfig(configs, {
-      highlightActiveBlock: true,
-      hideFirstIndent: false,
-    });
-  }
-});
-
 class IndentMarkersClass implements PluginValue {
   view: EditorView;
   decorations!: DecorationSet;
@@ -143,10 +123,10 @@ class IndentMarkersClass implements PluginValue {
     this.currentLineNumber = lineNumber;
     const activeBlockUpdateRequired = update.state.facet(indentationMarkerConfig).highlightActiveBlock && lineNumberChanged;
     if (
-        update.docChanged ||
-        update.viewportChanged ||
-        unitWidthChanged ||
-        activeBlockUpdateRequired
+      update.docChanged ||
+      update.viewportChanged ||
+      unitWidthChanged ||
+      activeBlockUpdateRequired
     ) {
       this.generate(update.state);
     }
