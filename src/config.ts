@@ -1,3 +1,5 @@
+import { combineConfig, Facet } from '@codemirror/state';
+
 export interface IndentationMarkerConfiguration {
     /**
      * Determines whether active block marker is styled differently.
