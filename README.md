@@ -50,6 +50,10 @@ optional properties:
 
     Boolean that determines whether markers in the first column are omitted.
     Defaults to `false`.
+  
+- `markerType`
+  
+    String that determines how far the indentation markers extend. `"fullScope"` indicates that the markers extend down the full height of a scope. With the `"codeOnly"` option, indentation markers terminate at the last nonempty line in a scope. Defaults to `"fullScope"`.
 
 #### Example
 
@@ -62,6 +66,7 @@ new EditorView({
       indentationMarkers({
         highlightActiveBlock: false,
         hideFirstIndent: true,
+        markerType: "codeOnly",
       })
     ],
   }),
