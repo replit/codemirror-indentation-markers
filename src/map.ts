@@ -32,16 +32,21 @@ export class IndentationMap {
   /** The width of the editor's indent unit. */
   private unitWidth: number;
 
+  /** The type of indentation to use (terminate at end of scope vs last non-empty line in scope) */
+  private markerType: "fullScope" | "codeOnly";
+
   /**
    * @param lines - The set of lines to get the indentation map for.
    * @param state - The {@link EditorState} to derive the indentation map from.
    * @param unitWidth - The width of the editor's indent unit.
+   * @param markerType - The type of indentation to use (terminate at end of scope vs last line of code in scope)
    */
-  constructor(lines: Set<Line>, state: EditorState, unitWidth: number) {
+  constructor(lines: Set<Line>, state: EditorState, unitWidth: number, markerType: "fullScope" | "codeOnly") {
     this.lines = lines;
     this.state = state;
     this.map = new Map();
     this.unitWidth = unitWidth;
+    this.markerType = markerType;
 
     for (const line of this.lines) {
       this.add(line);
@@ -120,8 +125,9 @@ export class IndentationMap {
       const prev = this.closestNonEmpty(line, -1);
       const next = this.closestNonEmpty(line, 1);
 
-      // if the next line ends the block, we'll use the previous line's indentation
-      if (prev.level >= next.level) {
+      // if the next line ends the block and the marker type is not set to codeOnly,
+        // we'll just use the previous line's indentation
+      if (prev.level >= next.level && this.markerType !== "codeOnly" ) {
         return this.set(line, 0, prev.level);
       }
 

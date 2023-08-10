@@ -136,8 +136,9 @@ class IndentMarkersClass implements PluginValue {
     const builder = new RangeSetBuilder<Decoration>();
 
     const lines = getVisibleLines(this.view, state);
-    const map = new IndentationMap(lines, state, this.unitWidth);
-    const { hideFirstIndent } = state.facet(indentationMarkerConfig)
+    const { hideFirstIndent, markerType } = state.facet(indentationMarkerConfig)
+    const map = new IndentationMap(lines, state, this.unitWidth, markerType);
+
 
     for (const line of lines) {
       const entry = map.get(line.number);

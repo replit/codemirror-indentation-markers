@@ -10,6 +10,11 @@ export interface IndentationMarkerConfiguration {
      * Determines whether markers in the first column are omitted.
      */
     hideFirstIndent?: boolean
+
+    /**
+     * Determines the type of indentation marker.
+     */
+    markerType?: "fullScope" | "codeOnly"
 }
 
 export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
@@ -17,6 +22,7 @@ export const indentationMarkerConfig = Facet.define<IndentationMarkerConfigurati
         return combineConfig(configs, {
             highlightActiveBlock: true,
             hideFirstIndent: false,
+            markerType: "fullScope"
         });
     }
 });
