@@ -28,12 +28,12 @@ export interface IndentationMarkerConfiguration {
         /**
          * Color of inactive indent markers when using a light theme.
          */
-        normalLight?: string
+        light?: string
 
         /**
          * Color of inactive indent markers when using a dark theme.
          */
-        normalDark?: string
+        dark?: string
 
         /**
          * Color of active indent markers when using a light theme.
