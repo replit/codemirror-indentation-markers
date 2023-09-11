@@ -15,7 +15,19 @@ import { IndentationMarkerConfiguration, indentationMarkerConfig } from "./confi
 // CSS classes:
 // - .cm-indent-markers
 
-function indentTheme(colors) {
+function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
+  const defaultColors = {
+    light: '#F0F1F2',
+    dark: '#2B3245',
+    activeLight: '#E4E5E6',
+    activeDark: '#3C445C',
+  };
+
+  let colors = defaultColors;
+  if (colorOptions) {
+    colors = {...defaultColors, ...colorOptions};
+  }
+
   return EditorView.baseTheme({
     '&light': {
       '--indent-marker-bg-color': colors.light,
@@ -153,21 +165,9 @@ class IndentMarkersClass implements PluginValue {
 }
 
 export function indentationMarkers(config: IndentationMarkerConfiguration = {}) {
-  const defaultColors = {
-    light: '#F0F1F2',
-    dark: '#2B3245',
-    activeLight: '#E4E5E6',
-    activeDark: '#3C445C',
-  };
-
-  let colors = defaultColors;
-  if (config.colors) {
-    colors = {...defaultColors, ...config.colors};
-  }
-
   return [
     indentationMarkerConfig.of(config),
-    indentTheme(colors),
+    indentTheme(config.colors),
     ViewPlugin.fromClass(IndentMarkersClass, {
       decorations: (v) => v.decorations,
     }),
