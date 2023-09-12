@@ -15,6 +15,36 @@ export interface IndentationMarkerConfiguration {
      * Determines the type of indentation marker.
      */
     markerType?: "fullScope" | "codeOnly"
+
+    /**
+     * Determines the thickness of marker (in pixels).
+     */
+    thickness?: number
+
+    /**
+     * Determines the color of marker.
+     */
+    colors?: {
+        /**
+         * Color of inactive indent markers when using a light theme.
+         */
+        light?: string
+
+        /**
+         * Color of inactive indent markers when using a dark theme.
+         */
+        dark?: string
+
+        /**
+         * Color of active indent markers when using a light theme.
+         */
+        activeLight?: string
+
+        /**
+         * Color of active indent markers when using a dark theme.
+         */
+        activeDark?: string
+    }
 }
 
 export const indentationMarkerConfig = Facet.define<IndentationMarkerConfiguration, Required<IndentationMarkerConfiguration>>({
@@ -22,7 +52,8 @@ export const indentationMarkerConfig = Facet.define<IndentationMarkerConfigurati
         return combineConfig(configs, {
             highlightActiveBlock: true,
             hideFirstIndent: false,
-            markerType: "fullScope"
+            markerType: "fullScope",
+            thickness: 1,
         });
     }
 });
