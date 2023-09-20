@@ -54,7 +54,7 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
       bottom: 0,
       background: 'var(--indent-markers)',
       pointerEvents: 'none',
-      zIndex: '-1',
+      zIndex: '100',
     },
   });
 }
