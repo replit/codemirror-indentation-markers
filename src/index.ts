@@ -1,5 +1,5 @@
-import { getIndentUnit } from '@codemirror/language';
-import { combineConfig, EditorState, Facet, RangeSetBuilder } from '@codemirror/state';
+import { getIndentUnit, indentUnit } from '@codemirror/language';
+import { EditorState, RangeSetBuilder, type Line } from '@codemirror/state';
 import {
   Decoration,
   ViewPlugin,
@@ -59,16 +59,16 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
   });
 }
 
-function createGradient(markerCssProperty: string, thickness: number, indentWidth: number, startOffset: number, columns: number) {
-  const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${thickness}px, transparent ${thickness}px ${indentWidth}ch)`
+function createGradient(markerCssProperty: string, thickness: number, indentWidth: string, startOffset: number, columns: number) {
+  const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${thickness}px, transparent ${thickness}px ${indentWidth})`
   // Subtract one pixel from the background width to get rid of artifacts of pixel rounding
-  return `${gradient} ${startOffset * indentWidth}.5ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
+  return `${gradient} calc(${startOffset} * ${indentWidth} + .5ch)/calc(${indentWidth} * ${columns} - 1px) no-repeat`
 }
 
-function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean, thickness: number) {
+function makeBackgroundCSS(entry: IndentEntry, indentWidth: string, hideFirstIndent: boolean, thickness: number) {
   const { level, active } = entry;
   if (hideFirstIndent && level === 0) {
-    return [];
+    return '';
   }
   const startAt = hideFirstIndent ? 1 : 0;
   const backgrounds = [];
@@ -99,7 +99,7 @@ function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstInd
 
 class IndentMarkersClass implements PluginValue {
   view: EditorView;
-  decorations!: DecorationSet;
+  decorations: DecorationSet = Decoration.none;
 
   private unitWidth: number;
   private currentLineNumber: number;
@@ -138,29 +138,44 @@ class IndentMarkersClass implements PluginValue {
     const { hideFirstIndent, markerType, thickness } = state.facet(indentationMarkerConfig);
     const map = new IndentationMap(lines, state, this.unitWidth, markerType);
 
+    this.view.requestMeasure({
+      read: () => {
+        let indentUnitString = this.view.state.facet(indentUnit);
+        for (const line of lines) {
+          const entry = map.get(line.number);
+          if (!entry?.level) {
+            continue;
+          }
+          if (!line.text.startsWith(indentUnitString)) {
+            continue;
+          }
+          const width =
+            (this.view.coordsAtPos(line.from + indentUnitString.length)?.left ?? 0) -
+            (this.view.coordsAtPos(line.from)?.left ?? 0);
+          console.log('width', width);
+          const backgrounds = makeBackgroundCSS(entry, `${width}px`, hideFirstIndent, thickness);
+          this.addBackground(builder, line, backgrounds);
+        }
+      },
+      write: () => {
+        this.decorations = builder.finish();
+        // Schedule an update. I'm not sure how to do this properly.
+        this.view.focus();
+      },
+    });
+  }
 
-    for (const line of lines) {
-      const entry = map.get(line.number);
-
-      if (!entry?.level) {
-        continue;
-      }
-
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, hideFirstIndent, thickness);
-
-      builder.add(
-        line.from,
-        line.from,
-        Decoration.line({
-          class: 'cm-indent-markers',
-          attributes: {
-            style: `--indent-markers: ${backgrounds}`,
-          },
-        }),
-      );
-    }
-
-    this.decorations = builder.finish();
+  private addBackground(builder: RangeSetBuilder<Decoration>, line: Line, backgrounds: string) {
+    builder.add(
+      line.from,
+      line.from,
+      Decoration.line({
+        class: 'cm-indent-markers',
+        attributes: {
+          style: `--indent-markers: ${backgrounds}`,
+        },
+      })
+    );
   }
 }
 
