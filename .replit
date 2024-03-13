@@ -1,14 +1,20 @@
 run="yarn run dev"
 
 entrypoint = "src/index.ts"
+hidden = [".config", "package-lock.json"]
+modules = ["nodejs-20:v8-20230920-bd784b9"]
 
-[packager]
-language = "nodejs-yarn"
-[packager.features]
-packageSearch = true
-guessImports = true
+[nix]
+channel = "stable-23_05"
 
-[languages.js]
-pattern = "**/*.ts"
-[languages.js.languageServer]
-start = ["typescript-language-server", "--stdio"]
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", "package.json", "package-lock.json"]
+
+[deployment]
+run = ["node", "index.js"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
+
+[[ports]]
+localPort = 3000
+externalPort = 80

@@ -36,7 +36,7 @@ const view = new EditorView({
       indentationMarkers(),
     ],
   }),
-  parent: document.querySelector('#editor'),
+  parent: document.getElementById('editor'),
 });
 
 function toggleIndent() {
