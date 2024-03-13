@@ -1,5 +1,5 @@
 import { getIndentUnit } from '@codemirror/language';
-import { combineConfig, EditorState, Facet, RangeSetBuilder } from '@codemirror/state';
+import { EditorState, RangeSetBuilder } from '@codemirror/state';
 import {
   Decoration,
   ViewPlugin,
@@ -49,7 +49,9 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
       content: '""',
       position: 'absolute',
       top: 0,
-      left: 0,
+      // .cm-line has a padding of 2px 
+      // https://github.com/codemirror/view/blob/1c0a0880fc904714339f059658f3ba3a88bb8e6e/src/theme.ts#L85
+      left: `2px`, 
       right: 0,
       bottom: 0,
       background: 'var(--indent-markers)',
