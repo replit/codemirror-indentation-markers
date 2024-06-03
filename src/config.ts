@@ -22,6 +22,13 @@ export interface IndentationMarkerConfiguration {
     thickness?: number
 
     /**
+     * Determines the thickness of active marker (in pixels).
+     *
+     * 0 to use regular thickness.
+     */
+    activeThickness?: number
+
+    /**
      * Determines the color of marker.
      */
     colors?: {
@@ -54,6 +61,7 @@ export const indentationMarkerConfig = Facet.define<IndentationMarkerConfigurati
             hideFirstIndent: false,
             markerType: "fullScope",
             thickness: 1,
+            thickness: -1,
         });
     }
 });

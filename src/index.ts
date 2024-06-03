@@ -67,8 +67,9 @@ function createGradient(markerCssProperty: string, thickness: number, indentWidt
   return `${gradient} ${startOffset * indentWidth}.5ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
 }
 
-function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean, thickness: number) {
+function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean, thickness: number, activeThickness: number) {
   const { level, active } = entry;
+  activeThickness = activeThickness === -1 ? thickness : activeThickness;
   if (hideFirstIndent && level === 0) {
     return [];
   }
@@ -83,7 +84,7 @@ function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstInd
       );
     }
     backgrounds.push(
-      createGradient('--indent-marker-active-bg-color', thickness, indentWidth, active - 1, 1),
+      createGradient('--indent-marker-active-bg-color', activeThickness, indentWidth, active - 1, 1),
     );
     if (active !== level) {
       backgrounds.push(
@@ -137,7 +138,7 @@ class IndentMarkersClass implements PluginValue {
     const builder = new RangeSetBuilder<Decoration>();
 
     const lines = getVisibleLines(this.view, state);
-    const { hideFirstIndent, markerType, thickness } = state.facet(indentationMarkerConfig);
+    const { hideFirstIndent, markerType, thickness, activeThickness } = state.facet(indentationMarkerConfig);
     const map = new IndentationMap(lines, state, this.unitWidth, markerType);
 
 
@@ -148,7 +149,7 @@ class IndentMarkersClass implements PluginValue {
         continue;
       }
 
-      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, hideFirstIndent, thickness);
+      const backgrounds = makeBackgroundCSS(entry, this.unitWidth, hideFirstIndent, thickness, activeThickness);
 
       builder.add(
         line.from,
