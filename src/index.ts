@@ -69,7 +69,7 @@ function createGradient(markerCssProperty: string, thickness: number, indentWidt
 
 function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean, thickness: number, activeThickness: number) {
   const { level, active } = entry;
-  activeThickness = activeThickness === -1 ? thickness : activeThickness;
+  activeThickness = activeThickness ?? thickness;
   if (hideFirstIndent && level === 0) {
     return [];
   }
