@@ -22,6 +22,13 @@ export interface IndentationMarkerConfiguration {
     thickness?: number
 
     /**
+     * Determines the thickness of active marker (in pixels).
+     *
+     * If undefined or null, then regular thickness will be used.
+     */
+    activeThickness?: number
+
+    /**
      * Determines the color of marker.
      */
     colors?: {

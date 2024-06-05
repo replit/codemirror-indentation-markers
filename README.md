@@ -59,6 +59,10 @@ optional properties:
 
     Integer that determines the thickness in pixels of the indentation markers. Defaults to `1`.
 
+- `activeThickness`
+
+    Integer that determines the thickness in pixels of the active indentation markers. If `undefined` or `null` then `thickness` will be used. Defaults to `undefined`.
+
 - `colors`
 
     Object that determines the colors of the indentation markers.
