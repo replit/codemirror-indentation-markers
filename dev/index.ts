@@ -44,4 +44,14 @@ function toggleIndent() {
   view.dispatch({ effects: indentConf.reconfigure(indentUnit.of(indent)) })
 }
 
+function toggleFont() {
+  let cmScroller = document.querySelector('.cm-scroller') as HTMLDivElement;
+  if (cmScroller.style.fontFamily === 'sans-serif') {
+    cmScroller.style.removeProperty('font-family');
+  } else {
+    cmScroller.style.fontFamily = 'sans-serif';
+  }
+}
+
 document.getElementById('toggleIndent').addEventListener('click', toggleIndent)
+document.getElementById('toggleFont').addEventListener('click', toggleFont)
