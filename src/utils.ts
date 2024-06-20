@@ -61,6 +61,10 @@ export function numColumns(str: string, tabSize: number) {
         col += 1;
         continue loop;
       }
+      case '\u00A0': {
+        col += 1;
+        continue loop;
+      }
 
       case '\t': {
         // if the current column is a multiple of the tab size, we can just
