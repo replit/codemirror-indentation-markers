@@ -57,10 +57,7 @@ export function numColumns(str: string, tabSize: number) {
   // eslint-disable-next-line no-restricted-syntax
   loop: for (let i = 0; i < str.length; i++) {
     switch (str[i]) {
-      case ' ': {
-        col += 1;
-        continue loop;
-      }
+      case ' ':
       case '\u00A0': {
         col += 1;
         continue loop;
