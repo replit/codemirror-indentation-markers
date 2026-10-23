@@ -49,9 +49,9 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
       content: '""',
       position: 'absolute',
       top: 0,
-      // .cm-line has a padding of 2px 
+      // .cm-line has a padding-left of 6px.
       // https://github.com/codemirror/view/blob/1c0a0880fc904714339f059658f3ba3a88bb8e6e/src/theme.ts#L85
-      left: `2px`, 
+      left: '6px',
       right: 0,
       bottom: 0,
       background: 'var(--indent-markers)',
@@ -64,7 +64,7 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
 function createGradient(markerCssProperty: string, thickness: number, indentWidth: number, startOffset: number, columns: number) {
   const gradient = `repeating-linear-gradient(to right, var(${markerCssProperty}) 0 ${thickness}px, transparent ${thickness}px ${indentWidth}ch)`
   // Subtract one pixel from the background width to get rid of artifacts of pixel rounding
-  return `${gradient} ${startOffset * indentWidth}.5ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
+  return `${gradient} ${startOffset * indentWidth}ch/calc(${indentWidth * columns}ch - 1px) no-repeat`
 }
 
 function makeBackgroundCSS(entry: IndentEntry, indentWidth: number, hideFirstIndent: boolean, thickness: number, activeThickness: number) {
