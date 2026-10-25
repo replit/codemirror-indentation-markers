@@ -53,7 +53,7 @@ function indentTheme(colorOptions: IndentationMarkerConfiguration['colors']) {
       // https://github.com/codemirror/view/blob/1c0a0880fc904714339f059658f3ba3a88bb8e6e/src/theme.ts#L85
       left: `2px`, 
       right: 0,
-      bottom: 0,
+      height: '1lh',
       background: 'var(--indent-markers)',
       pointerEvents: 'none',
       zIndex: '-1',
